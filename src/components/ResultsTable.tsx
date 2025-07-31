@@ -7,6 +7,7 @@ import { MetricOption } from "./MetricsSelector";
 
 export interface AnalysisResult {
   url: string;
+  testUrl?: string; // URL to view the detailed test results
   status: 'pending' | 'analyzing' | 'completed' | 'error';
   metrics: Record<string, number | string>;
   error?: string;
@@ -94,12 +95,13 @@ export const ResultsTable = ({ results, selectedMetrics, onExportCSV }: ResultsT
               <TableRow>
                 <TableHead className="min-w-[200px]">URL</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead className="min-w-[120px]">Test Result</TableHead>
                 {enabledMetrics.map(metric => (
                   <TableHead key={metric.id} className="text-center min-w-[100px]">
                     {metric.label}
                   </TableHead>
                 ))}
-                <TableHead className="w-[100px]">Actions</TableHead>
+                <TableHead className="w-[80px]">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -117,6 +119,22 @@ export const ResultsTable = ({ results, selectedMetrics, onExportCSV }: ResultsT
                       {result.status === 'analyzing' ? 'Analyzing...' : result.status}
                     </Badge>
                   </TableCell>
+                  <TableCell>
+                    {result.testUrl && result.status === 'completed' ? (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => window.open(result.testUrl, '_blank')}
+                        className="text-xs"
+                      >
+                        View Report
+                      </Button>
+                    ) : result.status === 'analyzing' ? (
+                      <div className="w-20 h-6 bg-muted animate-pulse rounded" />
+                    ) : (
+                      <span className="text-muted-foreground text-xs">-</span>
+                    )}
+                  </TableCell>
                   {enabledMetrics.map(metric => (
                     <TableCell key={metric.id} className="text-center">
                       {result.status === 'completed' && result.metrics[metric.id] !== undefined ? (
@@ -133,14 +151,17 @@ export const ResultsTable = ({ results, selectedMetrics, onExportCSV }: ResultsT
                     </TableCell>
                   ))}
                   <TableCell>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => window.open(result.url, '_blank')}
-                      className="p-1"
-                    >
-                      <ExternalLink className="w-4 h-4" />
-                    </Button>
+                    <div className="flex gap-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => window.open(result.url, '_blank')}
+                        className="p-1"
+                        title="Visit URL"
+                      >
+                        <ExternalLink className="w-3 h-3" />
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}

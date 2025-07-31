@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { UrlInput } from "@/components/UrlInput";
-import { MetricsSelector, MetricOption } from "@/components/MetricsSelector";
+import { MetricsSelector, MetricOption, DeviceType } from "@/components/MetricsSelector";
 import { ResultsTable, AnalysisResult } from "@/components/ResultsTable";
 import { AnalysisProgress } from "@/components/AnalysisProgress";
 import { Play, BarChart3, Zap, Target } from "lucide-react";
@@ -77,6 +77,7 @@ const DEFAULT_METRICS: MetricOption[] = [
 const Index = () => {
   const [urls, setUrls] = useState<string[]>([]);
   const [metrics, setMetrics] = useState<MetricOption[]>(DEFAULT_METRICS);
+  const [deviceType, setDeviceType] = useState<DeviceType>('desktop');
   const [results, setResults] = useState<AnalysisResult[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [currentAnalyzingUrl, setCurrentAnalyzingUrl] = useState<string>();
@@ -118,6 +119,7 @@ const Index = () => {
     try {
       await analyzeUrls(
         urls,
+        deviceType,
         (url, index, total) => {
           setCurrentAnalyzingUrl(url);
           // Update status to analyzing for current URL
@@ -142,7 +144,8 @@ const Index = () => {
                 ? { 
                     ...r, 
                     status: 'completed', 
-                    metrics: result.metrics 
+                    metrics: result.metrics,
+                    testUrl: result.testUrl
                   }
                 : r
             ));
@@ -232,7 +235,12 @@ const Index = () => {
         <UrlInput urls={urls} onUrlsChange={setUrls} />
 
         {/* Metrics Selection */}
-        <MetricsSelector metrics={metrics} onMetricsChange={setMetrics} />
+        <MetricsSelector 
+          metrics={metrics} 
+          onMetricsChange={setMetrics}
+          deviceType={deviceType}
+          onDeviceTypeChange={setDeviceType}
+        />
 
         {/* Analysis Controls */}
         <Card className="bg-gradient-card shadow-card border-primary/20">
@@ -243,7 +251,7 @@ const Index = () => {
                   Ready to Analyze
                 </h3>
                 <p className="text-sm text-muted-foreground">
-                  {urls.length} URL(s) • {metrics.filter(m => m.enabled).length} metric(s) selected
+                  {urls.length} URL(s) • {metrics.filter(m => m.enabled).length} metric(s) selected • {deviceType} view
                 </p>
               </div>
               <Button

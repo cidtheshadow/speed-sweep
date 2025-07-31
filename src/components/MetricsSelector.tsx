@@ -1,5 +1,8 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { Smartphone, Monitor } from "lucide-react";
 
 export interface MetricOption {
   id: string;
@@ -8,12 +11,16 @@ export interface MetricOption {
   enabled: boolean;
 }
 
+export type DeviceType = 'mobile' | 'desktop';
+
 interface MetricsSelectorProps {
   metrics: MetricOption[];
   onMetricsChange: (metrics: MetricOption[]) => void;
+  deviceType: DeviceType;
+  onDeviceTypeChange: (deviceType: DeviceType) => void;
 }
 
-export const MetricsSelector = ({ metrics, onMetricsChange }: MetricsSelectorProps) => {
+export const MetricsSelector = ({ metrics, onMetricsChange, deviceType, onDeviceTypeChange }: MetricsSelectorProps) => {
   const handleMetricToggle = (metricId: string) => {
     const updatedMetrics = metrics.map(metric =>
       metric.id === metricId ? { ...metric, enabled: !metric.enabled } : metric
@@ -60,7 +67,35 @@ export const MetricsSelector = ({ metrics, onMetricsChange }: MetricsSelectorPro
           </div>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-6">
+        {/* Device Type Selection */}
+        <div className="space-y-3">
+          <Label className="text-sm font-medium text-foreground">Device Type</Label>
+          <Select value={deviceType} onValueChange={onDeviceTypeChange}>
+            <SelectTrigger className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="desktop">
+                <div className="flex items-center gap-2">
+                  <Monitor className="w-4 h-4" />
+                  <span>Desktop</span>
+                </div>
+              </SelectItem>
+              <SelectItem value="mobile">
+                <div className="flex items-center gap-2">
+                  <Smartphone className="w-4 h-4" />
+                  <span>Mobile</span>
+                </div>
+              </SelectItem>
+            </SelectContent>
+          </Select>
+          <p className="text-xs text-muted-foreground">
+            Choose whether to test on mobile or desktop devices. This affects viewport size and performance metrics.
+          </p>
+        </div>
+
+        {/* Metrics Selection */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {metrics.map((metric) => (
             <div
