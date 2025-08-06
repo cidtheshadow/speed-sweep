@@ -26,19 +26,21 @@ const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const extractMetricsFromApiResponse = (data: any): PageSpeedResult['metrics'] => {
   const audits = data.lighthouseResult.audits;
-  const pageWeight = Number(audits['total-byte-weight']?.numericValue || 0);
-
+  
+  // Convert milliseconds to seconds for display metrics
+  const msToS = (ms: number) => Math.round(ms) / 1000;
+  
   return {
-    ttfb: audits['server-response-time']?.numericValue || 0,
-    startRender: audits['first-contentful-paint']?.numericValue || null,
-    fcp: audits['first-contentful-paint']?.numericValue || 0,
-    speedIndex: audits['speed-index']?.numericValue || 0,
-    lcp: audits['largest-contentful-paint']?.numericValue || 0,
-    cls: audits['cumulative-layout-shift']?.numericValue || 0,
-    tbt: audits['total-blocking-time']?.numericValue || 0,
-    inp: audits['interactive']?.numericValue || 0, // interactive is often used for INP-like estimate
-    pageWeight: pageWeight,
-    totalLoadingFirstView: audits['interactive']?.numericValue || 0,
+    ttfb: msToS(audits['server-response-time']?.numericValue || 0),
+    startRender: audits['first-contentful-paint']?.numericValue ? msToS(audits['first-contentful-paint'].numericValue) : null,
+    fcp: msToS(audits['first-contentful-paint']?.numericValue || 0),
+    speedIndex: msToS(audits['speed-index']?.numericValue || 0),
+    lcp: msToS(audits['largest-contentful-paint']?.numericValue || 0),
+    cls: Math.round((audits['cumulative-layout-shift']?.numericValue || 0) * 1000) / 1000, // CLS is unitless, keep as decimal
+    tbt: msToS(audits['total-blocking-time']?.numericValue || 0),
+    inp: msToS(audits['experimental-interaction-to-next-paint']?.numericValue || audits['max-potential-fid']?.numericValue || 0),
+    pageWeight: Math.round((audits['total-byte-weight']?.numericValue || 0) / 1024), // Convert bytes to KB
+    totalLoadingFirstView: msToS(audits['interactive']?.numericValue || 0),
   };
 };
 
