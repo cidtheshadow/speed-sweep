@@ -20,7 +20,7 @@ export interface PageSpeedResult {
 }
 
 // Use your actual API key
-const GOOGLE_API_KEY = 'EkBgrHrYjL6HCZfA2aKpM1L6gKiOsxHErnaEGl3WeBdq7ZUW';
+const GOOGLE_API_KEY = 'AIzaSyBthk3NiawoHbOfchFSlna_H3YTTddjc44';
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
