@@ -68,8 +68,7 @@ export const analyzeUrl = async (
       (data.lighthouseResult.categories.performance.score || 0) * 100
     );
 
-    const analysisURL =
-      data.lighthouseResult.finalUrl || `https://pagespeed.web.dev/?url=${encodeURIComponent(url)}`;
+    const analysisURL = `https://pagespeed.web.dev/analysis?url=${encodeURIComponent(url)}&form_factor=${deviceType}`;
 
     return {
       url,

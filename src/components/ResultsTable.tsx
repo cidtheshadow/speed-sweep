@@ -45,14 +45,15 @@ export const ResultsTable = ({ results, selectedMetrics, onExportCSV }: ResultsT
       case 'fcp':
       case 'lcp':
       case 'tbt':
-        return `${value}ms`;
+      case 'inp':
+        return `${value.toFixed(1)}s`;
       case 'cls':
         return value.toFixed(3);
       case 'speedIndex':
       case 'inp':
         return `${Math.round(value)}`;
       case 'pageWeight':
-        return `${(value / 1024).toFixed(1)}KB`;
+        return `${value.toFixed(0)}KB`;
       default:
         return value.toString();
     }
