@@ -20,11 +20,11 @@ export interface PageSpeedResult {
 }
 
 // Use your actual API key
-const GOOGLE_API_KEY = 'AIzaSyBthk3NiawoHbOfchFSlna_H3YTTddjc44';
+const GOOGLE_API_KEY = 'EkBgrHrYjL6HCZfA2aKpM1L6gKiOsxHErnaEGl3WeBdq7ZUW';
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-const extractMetricsFromApiResponse = ( any): PageSpeedResult['metrics'] => {
+const extractMetricsFromApiResponse = (data: any): PageSpeedResult['metrics'] => {
   const audits = data.lighthouseResult.audits;
   const pageWeight = Number(audits['total-byte-weight']?.numericValue || 0);
 
